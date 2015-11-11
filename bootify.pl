@@ -129,113 +129,11 @@ else
 #
 sub WriteCSSandJS
 {
-    # -------------------------- throbber.gif -------------------------- #
     my $share = Cwd::abs_path("$FindBin::Bin/share");
     `cp $share/throbber.gif .`;
-
-    # -------------------------- mptheme.css --------------------------- #
-    if(open(my $fp, '>', 'mptheme.css'))
-    {
-        print $fp <<'__EOF';
-        body {
-            padding-top: 70px;
-            padding-bottom: 30px;
-        }
-
-        .theme-dropdown .dropdown-menu {
-          display: block;
-          position: static;
-            margin-bottom: 20px;
-        }
-
-        .theme-showcase > p > .btn {
-          margin: 5px 0;
-__EOF
-        close $fp;
-    }
-
-    # -------------------------- mpcss.css   --------------------------- #
-    if(open(my $fp, '>', 'mpcss.css'))
-    {
-        print $fp <<'__EOF';
-        /* Base styles (regardless of theme) */
-        .bs-callout {
-           margin: 20px 0;
-           padding: 15px 30px 15px 15px;
-           border-left: 5px solid #eee;
-        }
-        .bs-callout h4 {
-           margin-top: 0;
-        }
-        .bs-callout p:last-child {
-           margin-bottom: 0;
-        }
-        .bs-callout code, .bs-callout .highlight {
-           background-color: #fff;
-        }
- 
-        /* Themes for different contexts */
-        .bs-callout-danger {
-           background-color: #fcf2f2;
-           border-color: #dFb5b4;
-        }
-        .bs-callout-warning {
-           background-color: #fefbed;
-           border-color: #f1e7bc;
-        }
-        .bs-callout-info {
-           background-color: #f0f7fd;
-           border-color: #d0e3f0;
-        }
-        .center {
-           text-align: center;
-        }
-        .instruction {
-           background-color: #eeeeee;
-           margin: 0 0 4pt 0;
-           border: 1pt solid red;
-           border-left: 6pt solid red;
-           padding: 2pt 2pt 2pt 6pt;
-           border-radius: 0px;
-           border-top-right-radius: 5px;
-           -moz-border-radius-topright: 5px;
-           -webkit-border-top-right-radius: 5px;
-           border-bottom-right-radius: 5px;
-           -moz-border-radius-bottomright: 5px;
-           -webkit-border-bottom-right-radius: 5px;
-        }
-        .instruction p {
-           margin: 0;
-           padding: 0;
-        }
-__EOF
-        close $fp;
-    }
-
-    # ------------------------ mpautotooltip.js ------------------------ #
-    if(open(my $fp, '>', 'mpautotooltip.js'))
-    {
-        print $fp <<'__EOF';
-        // Auto-activate tooltips and popovers so they work like everything else
-        // Taken from:
-        // http://stackoverflow.com/questions/9302667/how-to-get-twitter-bootstrap-jquery-elements-tooltip-popover-etc-working/14761703#14761703
-        //
-        // Use as
-        // <a rel="tooltip" title="My tooltip">Link</a>
-        // <a data-toggle="popover" data-content="test">Link</a>
-        // <button data-toggle="tooltip" data-title="My tooltip">Button</button>
-        $(function () {
-            $('body').popover({
-              selector: '[data-toggle="popover"]'
-                              });
-            $('body').tooltip({
-              selector: 'a[rel="tooltip"], [data-toggle="tooltip"]'
-                              });
-        });
-__EOF
-        close $fp;
-    }
-
+    `cp $share/mptheme.css .`;
+    `cp $share/mpcss.css .`;
+    `cp $share/mpautotooltip.js .`;
 }
 
 
@@ -250,7 +148,7 @@ sub UsageDie
 {
     print <<__EOF;
 
-makepages V1.0 (c) UCL, Dr. Andrew C.R. Martin
+makepages V1.1 (c) UCL, Dr. Andrew C.R. Martin
 
 Usage: makepages file.html
        -or-
@@ -726,7 +624,7 @@ __EOF
 #  $aPage  - Reference to array of lines for the page
 #
 #  The main routine for printing a page of HTML. Calls the various
-#  FixUp_*() routines to replace metatags with the relevant HTML.
+#  Fixup_*() routines to replace metatags with the relevant HTML.
 #  Then prints the lines of HTML to the file
 #
 #  11.11.15 Original   By: ACRM
@@ -737,20 +635,20 @@ sub PrintHTMLPage
 
     print $fp " <div class='container theme-showcase'>\n";
 
-    FixUp_quiz($aPage);
-    FixUp_bigheading($aPage);
-    FixUp_callout($aPage);
-    FixUp_warning($aPage);
-    FixUp_important($aPage);
-    FixUp_note($aPage);
-    FixUp_information($aPage);
-    FixUp_popup($aPage);
-    FixUp_help($aPage);
-    FixUp_instruction($aPage);
-    FixUp_accordion($aPage);
-    FixUp_ai($aPage);
-    FixUp_box($aPage);
-    FixUp_confirm($aPage);
+    Fixup_quiz($aPage);
+    Fixup_bigheading($aPage);
+    Fixup_callout($aPage);
+    Fixup_warning($aPage);
+    Fixup_important($aPage);
+    Fixup_note($aPage);
+    Fixup_information($aPage);
+    Fixup_popup($aPage);
+    Fixup_help($aPage);
+    Fixup_instruction($aPage);
+    Fixup_accordion($aPage);
+    Fixup_ai($aPage);
+    Fixup_box($aPage);
+    Fixup_confirm($aPage);
 
     foreach my $line (@$aPage)
     {
@@ -762,13 +660,13 @@ sub PrintHTMLPage
 
 
 #*************************************************************************
-#> void FixUp_bigheading($aPage)
+#> void Fixup_bigheading($aPage)
 #  -----------------------------
 #  Replaces the [bigheading] metatag with a Bootstrap jumbotron
 #
 #  11.11.15 Original   By: ACRM
 #
-sub FixUp_bigheading
+sub Fixup_bigheading
 {
     my($aPage) = @_;
 
@@ -781,13 +679,13 @@ sub FixUp_bigheading
 
 
 #*************************************************************************
-#> void FixUp_callout($aPage)
+#> void Fixup_callout($aPage)
 #  --------------------------
 #  Replaces the [callout] metatag with a Bootstrap info callout
 #
 #  11.11.15 Original   By: ACRM
 #
-sub FixUp_callout
+sub Fixup_callout
 {
     my($aPage) = @_;
 
@@ -800,13 +698,13 @@ sub FixUp_callout
 
 
 #*************************************************************************
-#> void FixUp_warning($aPage)
+#> void Fixup_warning($aPage)
 #  --------------------------
 #  Replaces the [warning] metatag with a Bootstrap danger alert
 #
 #  11.11.15 Original   By: ACRM
 #
-sub FixUp_warning
+sub Fixup_warning
 {
     my($aPage) = @_;
 
@@ -819,13 +717,13 @@ sub FixUp_warning
 
 
 #*************************************************************************
-#> void FixUp_important($aPage)
+#> void Fixup_important($aPage)
 #  ----------------------------
 #  Replaces the [important] metatag with a Bootstrap danger callout
 #
 #  11.11.15 Original   By: ACRM
 #
-sub FixUp_important
+sub Fixup_important
 {
     my($aPage) = @_;
 
@@ -838,13 +736,13 @@ sub FixUp_important
 
 
 #*************************************************************************
-#> void FixUp_note($aPage)
+#> void Fixup_note($aPage)
 #  -----------------------
 #  Replaces the [note] metatag with a Bootstrap warning callout
 #
 #  11.11.15 Original   By: ACRM
 #
-sub FixUp_note
+sub Fixup_note
 {
     my($aPage) = @_;
 
@@ -857,13 +755,13 @@ sub FixUp_note
 
 
 #*************************************************************************
-#> void FixUp_information($aPage)
+#> void Fixup_information($aPage)
 #  ------------------------------
 #  Replaces the [information] metatag with  a Bootstrap info alert
 #
 #  11.11.15 Original   By: ACRM
 #
-sub FixUp_information
+sub Fixup_information
 {
     my($aPage) = @_;
 
@@ -876,13 +774,13 @@ sub FixUp_information
 
 
 #*************************************************************************
-#> void FixUp_instruction($aPage)
+#> void Fixup_instruction($aPage)
 #  ------------------------------
 #  Replaces the [instruction] metatag with our own instruction class
 #
 #  11.11.15 Original   By: ACRM
 #
-sub FixUp_instruction
+sub Fixup_instruction
 {
     my($aPage) = @_;
 
@@ -895,13 +793,13 @@ sub FixUp_instruction
 
 
 #*************************************************************************
-#> void FixUp_popup($aPage)
+#> void Fixup_popup($aPage)
 #  ------------------------
 #  Replaces the [popup] metatag with a Bootstrap popup
 #
 #  11.11.15 Original   By: ACRM
 #
-sub FixUp_popup
+sub Fixup_popup
 {
     my($aPage) = @_;
 
@@ -915,14 +813,14 @@ sub FixUp_popup
 
 
 #*************************************************************************
-#> void FixUp_help($aPage)
+#> void Fixup_help($aPage)
 #  -----------------------
 #  Replaces the [help] metatag with a Bootstrap popup and a question mark
 #  glyph
 #
 #  11.11.15 Original   By: ACRM
 #
-sub FixUp_help
+sub Fixup_help
 {
     my($aPage) = @_;
 
@@ -936,13 +834,13 @@ sub FixUp_help
 
 
 #*************************************************************************
-#> void FixUp_accordion($aPage)
+#> void Fixup_accordion($aPage)
 #  ----------------------------
 #  Replaces the [accordion] metatag with a Bootstrap accordion panel group
 #
 #  11.11.15 Original   By: ACRM
 #
-sub FixUp_accordion
+sub Fixup_accordion
 {
     my($aPage) = @_;
 
@@ -956,13 +854,13 @@ sub FixUp_accordion
 
 
 #*************************************************************************
-#> void FixUp_ai($aPage)
+#> void Fixup_ai($aPage)
 #  ---------------------
 #  Replaces the [ai title='xxx'] metatag with an accordion item
 #
 #  11.11.15 Original   By: ACRM
 #
-sub FixUp_ai
+sub Fixup_ai
 {
     my($aPage) = @_;
 
@@ -997,13 +895,13 @@ sub FixUp_ai
 
 
 #*************************************************************************
-#> void FixUp_box($aPage)
+#> void Fixup_box($aPage)
 #  ----------------------
 #  Replaces the [box title='xxx'] metatag with a Bootstrap panel
 #
 #  11.11.15 Original   By: ACRM
 #
-sub FixUp_box
+sub Fixup_box
 {
     my($aPage) = @_;
 
@@ -1032,184 +930,10 @@ sub FixUp_box
 #
 sub WriteAjaxAndCGI
 {
-    # --------------------------- mpajax.js ---------------------------- #
-    if(open(my $fp, '>', 'mpajax.js'))
-    {
-        print $fp <<'__EOF';
-        var gRequest = null;
-        function createRequest() {
-            var req = null;
-            try {
-                req = new XMLHttpRequest();
-            } catch (trymicrosoft) {
-                try {
-                    req = new ActiveXObject("Msxml2.XMLHTTP");
-                } catch (othermicrosoft) {
-                    try {
-                        req = new ActiveXObject("Microsoft.XMLHTTP");
-                    } catch (failed) {
-                        req = null;
-                    }
-                }
-            }
-            
-            return(req);
-        }
-        
-        function DisplayPage()
-        {
-            gRequest = createRequest();
-            if (gRequest==null)
-            {
-                alert ("Browser does not support HTTP Request");
-                return;
-            } 
-            
-            var confirmed = document.getElementById("confirmed").checked;
-            var name  = document.getElementById("name").value;
-            var email = document.getElementById("email").value;
-            
-            name = name.replace(/^\s+/, '');
-            
-            if(!confirmed)
-            {
-                alert("You must tick the confirm box.");
-            }
-            else if(name.length < 2)
-            {
-                alert("You must provide your name.");
-            }
-            else if(! email.match(/.*\@.*\..*/))
-            {
-                alert("You must provide a valid email address.");
-            }
-            else
-            {
-                var url="./mpparticipation.cgi?name="+name+"&amp;email="+email+"&amp;confirmed="+confirmed;
-                var throbberElement = document.getElementById("throbber");
-                throbberElement.style.display = 'inline';
-                
-                gRequest.open("GET",url,true);
-                
-                gRequest.onreadystatechange=updatePage;
-                gRequest.send(null);
-            }
-        }
-        
-        function updatePage() 
-        { 
-            if (gRequest.readyState==4 || gRequest.readyState=="complete")
-            { 
-                var responseElement  = document.getElementById("response");
-                var throbberElement  = document.getElementById("throbber");
-                var nameentryElement = document.getElementById("nameentry");
-                
-                var response = gRequest.responseText;
-                
-                responseElement.innerHTML      = response;
-                throbberElement.style.display  = 'none';
-                nameentryElement.style.display = 'none';
-                responseElement.style.display  = 'inline';
-            } 
-        } 
-__EOF
-        close $fp;
-    }
-
-    # ----------------------- mpparticipation.cgi ---------------------- #
-    if(open(my $fp, '>', 'mpparticipation.cgi'))
-    {
-        print $fp <<'__EOF';
-#!/usr/bin/perl
-        use strict;
-        use CGI;
-        $|=1;
-
-        my $cgi = new CGI;
-
-        my $name      = $cgi->param('name');
-        my $email     = $cgi->param('email');
-        my $confirmed = $cgi->param('confirmed');
-        
-        print $cgi->header();
-        
-        my $ok = 0;
-        if($confirmed)
-        {
-            if(StoreParticipant($name, $email))
-            {
-                print <<__EOFX;
-                <h4>Your details have been saved as:</h4>
-                    <table>
-                    <tr><th>Name:</th><td>$name</td></tr>
-                    <tr><th>Email:</th><td>$email</td></tr>
-                    </table>
-__EOFX
-                $ok = 1;
-            }
-        }
-
-        if(!$ok)
-        {
-            print <<__EOFX;
-            <h4>An error occurred</h4>
-
-                <p>You need to reload this page and tick the confirmation box. Make
-                sure you do not have any non-standard characters (particularly '#') in your name or email
-                address.
-                </p>
-                <pre>
-$name
-$email
-                </pre>
-__EOFX
-        }
-
-        sub StoreParticipant
-        {
-            my($name, $email) = @_;
-            
-            my $user = "${name}_$email";
-            $user =~ s/[^A-Za-z0-9]/_/g;    # Remove odd chars and whitespace
-            $user =~ s/_+/_/g;              # Collapse multiple _ to one
-            $user = "./participants/${user}.txt";
-            my $time = GetTime();
-
-            if(open(my $fp, '>', $user))
-            {
-                print $fp "$name\t$email\t$time\n";
-                close $fp;
-            }
-            else
-            {
-                return(0);
-            }
-            return(1);
-        }
-
-        sub GetTime
-        {
-            my($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
-            $year += 1900;
-            my $timeStr = sprintf("%02d-%02d-%04d:%02d:%02d:%02d",
-                                  $mday,$mon,$year,
-                                  $hour,$min,$sec);
-            return($timeStr);
-        }
-__EOF
-        close $fp;
-        `chmod +x mpparticipation.cgi`;
-    }
-
-    # -------------------------- .htaccess   --------------------------- #
-    if(open(my $fp, '>', '.htaccess'))
-    {
-        print $fp <<'__EOF';
-Options +ExecCGI
-AddHandler cgi-script .cgi
-__EOF
-        close $fp;
-    }
+    my $share = Cwd::abs_path("$FindBin::Bin/share");
+    `cp $share/mpajax.js .`;
+    `cp $share/mpparticipation.cgi .`;
+    `cp $share/htaccess ./.htaccess`;
 }
 
 
@@ -1234,14 +958,14 @@ sub MakeResponseDirectory
 
 
 #*************************************************************************
-#> void FixUp_confirm($aPage)
+#> void Fixup_confirm($aPage)
 #  --------------------------
 #  Replaces the [confirm] metatag with our AJAX/CGI for confirming
 #  participation
 #
 #  11.11.15 Original   By: ACRM
 #
-sub FixUp_confirm
+sub Fixup_confirm
 {
     my($aPage) = @_;
 
@@ -1300,20 +1024,20 @@ sub CleanupDie
     `\\rm -f mptheme.css`;
     `\\rm -f mpautotooltip.js`;
     `\\rm -f mpparticipation.cgi`;
-    `\\rm -i index.html .htaccess page*.html`;
+    `\\rm -i index.html .htaccess page*.html throbber.gif`;
 
     exit(0);
 }
 
 
 #*************************************************************************
-#> void FixUp_quiz($aPage)
+#> void Fixup_quiz($aPage)
 #  ----------------------
 #  Replaces the [box title='xxx'] metatag with a Bootstrap panel
 #
 #  11.11.15 Original   By: ACRM
 #
-sub FixUp_quiz
+sub Fixup_quiz
 {
     my($aPage) = @_;
     my $hasQuiz = 0;
