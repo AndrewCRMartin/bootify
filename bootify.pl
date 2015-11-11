@@ -1,13 +1,14 @@
 #!/usr/bin/perl -s
 #*************************************************************************
 #
-#   Program:    makepages
-#   File:       makepages.pl
+#   Program:    bootify
+#   File:       bootify.pl
 #   
 #   Version:    V1.0
 #   Date:       11.11.15
 #   Function:   Create a (set of) HTML page(s) using attractive 
 #               Bootstrap layout from very simple HTML meta-markup
+#               So this beautifies and boostrapifies the pages
 #   
 #   Copyright:  (c) Dr. Andrew C. R. Martin, UCL, 2015
 #   Author:     Dr. Andrew C. R. Martin
