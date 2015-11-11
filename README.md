@@ -123,6 +123,6 @@ will be copied onto each page.
 Favicon
 -------
 
-You can place a file 'favicon.png' in the directory if you wish to set
+You can place a file `favicon.png` in the directory if you wish to set
 the favourites icon on each page.
 
