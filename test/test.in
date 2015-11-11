@@ -91,6 +91,41 @@ This is section 3
 This is a boxed region
 <!-- [/box] -->
 
+<!-- [quiz] -->
+<!--
+# Example input file
+
+T: AM2C36 Practical 1
+S: Proteins and Amino Acids
+
+Q: Which of the following is <i>not</i> a role of proteins?
+A: Catalysis
+C: Creating a membrane
+A: Enabling motion
+A: Sensors
+E: Membranes may contain proteins, but are formed from lipds
+
+Q: Which of these proteins is a good example of an enzyme?
+C: Catalase
+A: Myoglobin
+
+Q: How many standard amino acids are there?
+A: 18
+C: 20
+A: 21
+A: 24
+N: Some amino acids undergo post-translational modification
+N: (phospho-tyrosine and phospho-serine. Glutamate at the N-terminus 
+N: of a protein can cyclize to form 'PCA' (L-2-Pyrrolidone-5-Carboxylic 
+N: Acid, or L-Pyroglutamic Acid)
+
+Q: What is the simplest amino acid with a sidechain?
+A: Glycine
+C: Alanine
+A: Proline
+-->
+<!-- [/quiz] -->
+
 <!-- [confirm] -->
 Please confirm that you have completed this work to the best of your ability.
 <!-- [/confirm] -->
