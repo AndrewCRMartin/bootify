@@ -130,10 +130,10 @@ else
 sub WriteCSSandJS
 {
     my $share = Cwd::abs_path("$FindBin::Bin/share");
-    `cp $share/throbber.gif .`;
-    `cp $share/mptheme.css .`;
-    `cp $share/mpcss.css .`;
-    `cp $share/mpautotooltip.js .`;
+    `cp $share/bootify/throbber.gif .`;
+    `cp $share/bootify/mptheme.css .`;
+    `cp $share/bootify/mpcss.css .`;
+    `cp $share/bootify/mpautotooltip.js .`;
 }
 
 
@@ -931,9 +931,9 @@ sub Fixup_box
 sub WriteAjaxAndCGI
 {
     my $share = Cwd::abs_path("$FindBin::Bin/share");
-    `cp $share/mpajax.js .`;
-    `cp $share/mpparticipation.cgi .`;
-    `cp $share/htaccess ./.htaccess`;
+    `cp $share/bootify/mpajax.js .`;
+    `cp $share/bootify/mpparticipation.cgi .`;
+    `cp $share/bootify/htaccess ./.htaccess`;
 }
 
 
