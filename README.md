@@ -1,7 +1,10 @@
-makepages
-=========
+bootify and genquiz
+===================
 
-`makepages` is a small script for splitting a single large HTML file
+bootify
+-------
+
+`bootify` is a small script for splitting a single large HTML file
 into separate pages with a Continue button to progress through pages
 and a menu, all formatted using Bootstrap. The idea is to make things
 a little easier than creating pages from scratch.
@@ -16,8 +19,8 @@ in HTML comments. The metatags are contained in [] rather than <>:
     <!-- [/tagname] -->
 
 
-Creating pages
---------------
+
+### Creating pages
 
 Each page is separated with
 
@@ -27,8 +30,9 @@ Each page is separated with
 These comments are wrapped around each page - the 'xxx' is the menu
 item to access this page.
 
-The title (index) page
-----------------------
+
+
+### The title (index) page
 
 The title (index) page is expected to have a big heading. This should
 contain a short `<h1>` heading (which will also be used as a 'home' menu
@@ -37,8 +41,9 @@ item on each page), and maybe an `<h2>` heading and some `<p>` text.
     <!-- [bigheading] -->
     <!-- [/bigheading] -->
 
-Information and callouts
-------------------------
+
+
+### Information and callouts
 
 A callout box
 
@@ -70,8 +75,9 @@ An instruction that the reader might be expected to follow
     <!-- [instruction] -->
     <!-- [/instruction] -->
 
-Popups
-------
+
+
+### Popups
 
 You can create a popup link within the text with
 
@@ -83,8 +89,9 @@ Or, if it's specifically a help popup where you want a question mark glyph, then
     <!-- [help text='xxx'] -->
     <!-- [/help] -->
 
-Accordions and box-outs
------------------------
+
+
+### Accordions and box-outs
 
 You can create an accordion as follows - `ai` is analagous to `<li>`
 
@@ -98,8 +105,9 @@ A box has similar styling to an accordion but doesn't shrink and expand
     <!-- [box title='xxx'] -->
     <!-- [/box] -->
 
-Confirmation box
-----------------
+
+
+### Confirmation box
 
 This is designed to provide a box where a user of the page can enter a
 name and email and confirm something - e.g. that they have done an
@@ -114,14 +122,23 @@ A `participants` directory will be created containing a file for each
 user. This file contains the name and email information and the time
 at which the clicked the confirm box.
 
-Additional style information
-----------------------------
 
-The contents of the first `<style>` tag in the HTML `<head>` section
-will be copied onto each page.
 
-Favicon
--------
+### Additional style information
+
+If present, the contents of the first `<style>` tag in the HTML
+`<head>` section will be copied onto each page.
+
+
+
+### HTML title
+
+If present (it should be!), the contents of the `<title>` tag in the
+HTML `<head>` section will be copied onto each page.
+
+
+
+### Favicon
 
 You can place a file `favicon.png` in the directory if you wish to set
 the favourites icon on each page.
