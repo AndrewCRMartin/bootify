@@ -99,6 +99,13 @@
 #   V1.0  11.11.15 Moved the code that does the work out into genquiz.pm
 #
 #*************************************************************************
+# Add the path of the executable to the library path
+use FindBin;
+use lib $FindBin::Bin;
+# Or if we have a bin directory and a lib directory
+#use Cwd qw(abs_path);
+#use FindBin;
+#use lib abs_path("$FindBin::Bin/../lib");
 use strict;
 use genquiz;
 

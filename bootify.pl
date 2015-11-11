@@ -1292,7 +1292,7 @@ sub CleanupDie
     `\\rm -f mptheme.css`;
     `\\rm -f mpautotooltip.js`;
     `\\rm -f mpparticipation.cgi`;
-    `\\rm -i index.html page*.html`;
+    `\\rm -i index.html .htaccess page*.html`;
 
     exit(0);
 }

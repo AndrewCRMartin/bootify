@@ -143,3 +143,37 @@ HTML `<head>` section will be copied onto each page.
 You can place a file `favicon.png` in the directory if you wish to set
 the favourites icon on each page.
 
+
+
+genquiz
+-------
+
+`genquiz` is another small script for generating JavaScript quizes as
+standalone web pages, or as a piece of HTML that can be embedded in an
+HTML page, perhaps using the Perl template toolkit.
+
+The JavaScript comes from the JavaScript quiz framework at
+http://javascript.internet.com/miscellaneous/javascript-quiz.html
+
+
+Type 
+
+    genquiz -h
+
+for help, or
+
+    genquiz -example
+
+to generate an example input file.
+
+    T: title (optional)
+    S: subtitle (optional)
+    L: Link to a CSS style sheet
+    Q: question
+    A: incorrect answer
+    C: correct answer
+    E: explanation when a wrong answer is given (optional)
+    N: notes given for a wrong or right answer (optional)
+
+Note: `N:` and `E:` may span multiple lines
+
