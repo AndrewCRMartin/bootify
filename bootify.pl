@@ -54,9 +54,10 @@
 #*************************************************************************
 # Add the path of the executable to the library path
 use FindBin;
+use Cwd qw(abs_path);
+
 use lib $FindBin::Bin;
 # Or if we have a bin directory and a lib directory
-#use Cwd qw(abs_path);
 #use FindBin;
 #use lib abs_path("$FindBin::Bin/../lib");
 use genquiz;
@@ -128,6 +129,10 @@ else
 #
 sub WriteCSSandJS
 {
+    # -------------------------- throbber.gif -------------------------- #
+    my $share = Cwd::abs_path("$FindBin::Bin/share");
+    `cp $share/throbber.gif .`;
+
     # -------------------------- mptheme.css --------------------------- #
     if(open(my $fp, '>', 'mptheme.css'))
     {
