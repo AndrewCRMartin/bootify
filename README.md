@@ -31,8 +31,8 @@ The title (index) page
 ----------------------
 
 The title (index) page is expected to have a big heading. This should
-contain a short <h1> heading (which will also be used as a 'home' menu
-item on each page), and maybe an <h2> heading and some <p> text.
+contain a short `<h1>` heading (which will also be used as a 'home' menu
+item on each page), and maybe an `<h2>` heading and some `<p>` text.
 
     <!-- [bigheading] -->
     <!-- [/bigheading] -->
