@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Makepages test</title>
+<title>Bootify test</title>
 <style type='text/css'>
 pre, samp {background: #DDDDDD;
       border: 1pt solid #CCCCCC;
@@ -15,16 +15,16 @@ pre {padding: 5pt 20pt;}
 <!-- [page menu='Home'] -->
 
 <!-- [bigheading] -->
-<h1>Makepages</h1>
+<h1>Bootify</h1>
 <h2>An script to generate a set of HTML pages</h2>
-<p>Makepages generates attractive Bootstrap pages from a single master HTML file
+<p>Bootify generates attractive Bootstrap pages from a single master HTML file
 which includes additional markup using metatags.</p>
 <!-- [/bigheading] -->
 
-<h2>makepages</h2>
+<h2>bootify</h2>
 
 <p>
-makepages is a small script for splitting a single large HTML file
+bootify is a small script for splitting a single large HTML file
 into separate pages with a Continue button to progress through pages
 and a menu, all formatted using Bootstrap. The idea is to make things
 a little easier than creating pages from scratch.
@@ -95,8 +95,8 @@ This is a boxed region
 <!--
 # Example input file
 
-T: AM2C36 Practical 1
-S: Proteins and Amino Acids
+#T: AM2C36 Practical 1
+#S: Proteins and Amino Acids
 
 Q: Which of the following is <i>not</i> a role of proteins?
 A: Catalysis

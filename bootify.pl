@@ -4,7 +4,7 @@
 #   Program:    bootify
 #   File:       bootify.pl
 #   
-#   Version:    V1.0
+#   Version:    V1.1
 #   Date:       11.11.15
 #   Function:   Create a (set of) HTML page(s) using attractive 
 #               Bootstrap layout from very simple HTML meta-markup
@@ -49,6 +49,7 @@
 #   Revision History:
 #   =================
 #   V1.0    11.11.15 Original By: ACRM
+#   V1.1    11.11.15 Added quiz support
 #
 #*************************************************************************
 # Add the path of the executable to the library path
@@ -58,6 +59,7 @@ use lib $FindBin::Bin;
 #use Cwd qw(abs_path);
 #use FindBin;
 #use lib abs_path("$FindBin::Bin/../lib");
+use genquiz;
 
 #*************************************************************************
 use strict;
@@ -730,6 +732,7 @@ sub PrintHTMLPage
 
     print $fp " <div class='container theme-showcase'>\n";
 
+    FixUp_quiz($aPage);
     FixUp_bigheading($aPage);
     FixUp_callout($aPage);
     FixUp_warning($aPage);
@@ -1296,3 +1299,81 @@ sub CleanupDie
 
     exit(0);
 }
+
+
+#*************************************************************************
+#> void FixUp_quiz($aPage)
+#  ----------------------
+#  Replaces the [box title='xxx'] metatag with a Bootstrap panel
+#
+#  11.11.15 Original   By: ACRM
+#
+sub FixUp_quiz
+{
+    my($aPage) = @_;
+    my $hasQuiz = 0;
+    my $startTag = '<!--\s+\[quiz\]\s+--\>';
+    my $endTag   = '<!--\s+\[/quiz\]\s+--\>';
+
+    # First see if there is a quiz on this page
+    foreach my $line (@$aPage)
+    {
+        if($line =~ /$startTag/)
+        {
+            $hasQuiz = 1;
+            last;
+        }
+    }
+
+    # If there is a quiz...
+    if($hasQuiz)
+    {
+        my $giveAnswer = 0;
+
+        # copy the lines leading up to the quiz
+        my @outPage = ();
+        foreach my $line (@$aPage)
+        {
+            last if($line =~ /$startTag/);
+            push @outPage, $line;
+        }
+
+        # copy the quiz itself
+        my @quiz = ();
+        my $inQuiz = 0;
+        foreach my $line (@$aPage)
+        {
+            last if($line =~ /$endTag/);
+            push @quiz, $line if($inQuiz);
+            $inQuiz = 1 if($line =~ /$startTag/);
+        }
+
+        # process the quiz
+        genquiz::ParseQuiz(@quiz);
+        my $html = genquiz::WriteJavaScript($giveAnswer, 
+                                            $::css, 
+                                            \@::correct, 
+                                            \@::explanations, 
+                                            \@::notes);
+        $html .= genquiz::WriteQuiz($::title, $::subtitle);
+
+        # Add this to our output
+        push @outPage, $html;
+
+        # Add the rest of the input page
+        my $inSection = 0;
+        foreach my $line (@$aPage)
+        {
+            push @outPage, $line if($inSection);
+            $inSection = 1 if($line =~ /$endTag/);
+        }
+
+        # Finally copy the output array 
+        @$aPage = ();
+        foreach my $line (@outPage)
+        {
+            push @$aPage, $line;
+        }
+    }
+}
+
