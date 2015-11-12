@@ -12,7 +12,7 @@ a little easier than creating pages from scratch.
 The single page is designed to be normal viewable HTML. 
 
 The additional markup is inserted using 'metatags' that are contained
-in HTML comments. The metatags are contained in [] rather than <>:
+in HTML comments. The metatags are contained in `[]` rather than `<>`:
 
     <!-- [tagname attribute='value'] -->
     ...Content...
