@@ -44,7 +44,11 @@ Formatting is created by using metatags buried in HTML comments of the form:
 &lt;-- [/page] --&gt;
 </pre>
 
-<p>The rest of this page contains examples</p>
+<!-- [/page] -->
+
+<!-- [page menu='Examples'] -->
+
+<h2>This page contains examples</h2>
 
 <!-- [information] -->
 <p>This is for information</p>

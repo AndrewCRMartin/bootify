@@ -17,3 +17,23 @@ with the contents of the share directory. e.g.
 
 This is done by the `install.sh` script
 
+Setup
+-----
+
+You need to ensure that the web directory you use is set up to allow
+`ExecCGI` and treats scripts with the extension `.cgi` as CGI
+scripts. Alternatively, this directory must allow all options to be
+overridden since a `.htaccess` file will be created in the directory
+that sets these options.
+
+Example
+-------
+
+Assuming your web directory is `/var/www/html/test/bootify/', do the following:
+
+    cd /var/www/html/test/bootify
+    bootify.pl ~/git/bootify/test/test.in
+
+
+
+    
