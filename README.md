@@ -122,6 +122,14 @@ A `participants` directory will be created containing a file for each
 user. This file contains the name and email information and the time
 at which the clicked the confirm box.
 
+### Quizes
+
+You can also embed a JavaScript quiz in a page using:
+
+    <!-- [quiz] -->
+    <!-- [/quiz] -->
+
+See the `genquiz` documentation below for the format used for the quiz.
 
 
 ### Additional style information
