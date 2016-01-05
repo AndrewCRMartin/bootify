@@ -16,7 +16,7 @@ pre {padding: 5pt 20pt;}
 
 <!-- [bigheading] -->
 <h1>Bootify</h1>
-<h2>An script to generate a set of HTML pages</h2>
+<h2>A script to generate a set of HTML pages</h2>
 <p>Bootify generates attractive Bootstrap pages from a single master HTML file
 which includes additional markup using metatags.</p>
 <!-- [/bigheading] -->
