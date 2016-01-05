@@ -4,13 +4,13 @@
 #   Program:    bootify
 #   File:       bootify.pl
 #   
-#   Version:    V1.1
-#   Date:       11.11.15
+#   Version:    V1.2
+#   Date:       05.01.16
 #   Function:   Create a (set of) HTML page(s) using attractive 
 #               Bootstrap layout from very simple HTML meta-markup
 #               So this beautifies and boostrapifies the pages
 #   
-#   Copyright:  (c) Dr. Andrew C. R. Martin, UCL, 2015
+#   Copyright:  (c) Dr. Andrew C. R. Martin, UCL, 2015-2016
 #   Author:     Dr. Andrew C. R. Martin
 #   Address:    Institute of Structural and Molecular Biology
 #               Division of Biosciences
@@ -50,6 +50,7 @@
 #   =================
 #   V1.0    11.11.15 Original By: ACRM
 #   V1.1    11.11.15 Added quiz support
+#   V1.2    05.01.16 Added [link]
 #
 #*************************************************************************
 # Add the path of the executable to the library path
@@ -143,16 +144,19 @@ sub WriteCSSandJS
 #  Prints a usage message and exits
 #
 #  11.11.15 Original   By: ACRM
+#  05.01.16 V1.2 - corrected program name!
 #
 sub UsageDie
 {
     print <<__EOF;
 
-makepages V1.1 (c) UCL, Dr. Andrew C.R. Martin
+bootify V1.2 (c) UCL, Dr. Andrew C.R. Martin
 
-Usage: makepages file.html
+Usage: bootify file.html
        -or-
-       makepages -clean
+       bootify -clean
+
+Note that every piece of meta-HTML must appear on a single line in the input.
 
 __EOF
     exit 0;
@@ -392,7 +396,7 @@ sub Replace
 {
     my($line, $tag, $new, $idStem, $sCounter) = @_;
 
-    # Constract the regex: <!-- [$tag] -->
+    # Construct the regex: <!-- [$tag] -->
     my $regex = '<!--\s+\[' . $tag . '\]\s+--\>';
     if(scalar(@_) > 3)
     {
@@ -429,6 +433,7 @@ sub Replace
 #     <div class="value">
 #
 #  11.11.15 Original   By: ACRM
+#  05.01.16 {} replacement is now global
 #
 sub ReplaceParam
 {
@@ -437,8 +442,34 @@ sub ReplaceParam
     if($line =~ $regex)
     {
         my $value = $1;
-        $replace =~ s/\{\}/$value/;
+        $replace =~ s/\{\}/$value/g;
         $line =~ s/$regex/$replace/;
+    }
+    return($line);
+}
+
+
+#*************************************************************************
+#> $line = ReplaceWholeTag($line, $tag, $content)
+#  ----------------------------------------------
+#  Replaces a whole [tag]...[/tag] with $content
+#  If $content contains '{}', then this will be substituted with the
+#  text between [tag] and [/tag]
+#
+#  05.01.16 Original   By: ACRM
+#
+sub ReplaceWholeTag
+{
+    my($line, $tag, $newContent) = @_;
+
+    # Construct the regex: <!-- [$tag](.*?)[/$tag] -->
+    my $regex = '<!--\s+\[' . $tag . '\]\s+--\>(.*?)<!--\s+\[/' . $tag . '\]\s+--\>';
+
+    if($line =~ /$regex/)
+    {
+        my $oldContent =  $1;
+        $newContent    =~ s/\{\}/$oldContent/g;
+        $line          =~ s/$regex/$newContent/;
     }
     return($line);
 }
@@ -629,6 +660,7 @@ __EOF
 #  Then prints the lines of HTML to the file
 #
 #  11.11.15 Original   By: ACRM
+#  05.01.16 Added Fixup_link()
 #
 sub PrintHTMLPage
 {
@@ -650,6 +682,7 @@ sub PrintHTMLPage
     Fixup_ai($aPage);
     Fixup_box($aPage);
     Fixup_confirm($aPage);
+    Fixup_link($aPage);
 
     foreach my $line (@$aPage)
     {
@@ -1104,6 +1137,23 @@ sub Fixup_quiz
         {
             push @$aPage, $line;
         }
+    }
+}
+
+#*************************************************************************
+#> void Fixup_link($aPage)
+#  -----------------------
+#  Replaces the [link] metatag with a <a href='xxx'>xxx</a>
+#
+#  05.01.16 Original   By: ACRM
+#
+sub Fixup_link
+{
+    my($aPage) = @_;
+
+    foreach my $line (@$aPage)
+    {
+        $line = ReplaceWholeTag($line, 'link',"<a href='{}' target='links'>{}</a>");
     }
 }
 

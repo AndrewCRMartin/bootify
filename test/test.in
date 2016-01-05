@@ -78,6 +78,9 @@ Formatting is created by using metatags buried in HTML comments of the form:
 <p>This is an instruction</p>
 <!-- [/instruction] -->
 
+<p>This is a link appearing in a different tab/page:
+<!-- [link] -->http://www.bioinf.org.uk<!-- [/link] -->
+</p>
 
 <!-- [accordion] -->
 <!-- [ai title='Section 1'] -->

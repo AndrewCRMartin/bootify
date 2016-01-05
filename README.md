@@ -18,6 +18,16 @@ in HTML comments. The metatags are contained in `[]` rather than `<>`:
     ...Content...
     <!-- [/tagname] -->
 
+*NOTE* - every metatag must be contained on a single line. i.e. you must do
+
+    <!-- [tagname attribute='this is a very long attribute value that you might want to split'] -->
+
+*NOT*
+
+    <!-- [tagname attribute='this is a very long 
+                             attribute value that 
+                             you might want to split']
+    -->
 
 
 ### Creating pages
@@ -89,6 +99,8 @@ Or, if it's specifically a help popup where you want a question mark glyph, then
     <!-- [help text='xxx'] -->
     <!-- [/help] -->
 
+*Don't forget that you cannot split the metatag so you can't put line
+breaks in the associated text.*
 
 
 ### Accordions and box-outs
@@ -105,6 +117,19 @@ A box has similar styling to an accordion but doesn't shrink and expand
     <!-- [box title='xxx'] -->
     <!-- [/box] -->
 
+### Links
+
+You can create a link to another web page that will simply use the URL
+for the clickable text and for the link and will open in a new
+tab/page called 'links':
+
+    <!-- [link] -->http://www.bioinf.org.uk<!-- [/link] -->
+
+*Note: both the opening and closing tags this must appear on a single input line.* 
+
+This will be translated into:
+
+    <a href='http://www.bioinf.org.uk' target='links'>http://www.bioinf.org.uk</a>
 
 
 ### Confirmation box
