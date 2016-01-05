@@ -155,6 +155,7 @@ Usage: makepages file.html
        makepages -clean
 
 __EOF
+    exit 0;
 }
 
 
