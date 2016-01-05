@@ -18,11 +18,11 @@ in HTML comments. The metatags are contained in `[]` rather than `<>`:
     ...Content...
     <!-- [/tagname] -->
 
-*NOTE* - every metatag must be contained on a single line. i.e. you must do
+**NOTE** - every metatag must be contained on a single line. i.e. you must do
 
     <!-- [tagname attribute='this is a very long attribute value that you might want to split'] -->
 
-*NOT*
+**NOT**
 
     <!-- [tagname attribute='this is a very long 
                              attribute value that 
@@ -99,8 +99,8 @@ Or, if it's specifically a help popup where you want a question mark glyph, then
     <!-- [help text='xxx'] -->
     <!-- [/help] -->
 
-*Don't forget that you cannot split the metatag so you can't put line
-breaks in the associated text.*
+**Don't forget that you cannot split the metatag so you can't put line
+breaks in the associated text.**
 
 
 ### Accordions and box-outs
@@ -125,7 +125,7 @@ tab/page called 'links':
 
     <!-- [link] -->http://www.bioinf.org.uk<!-- [/link] -->
 
-*Note: both the opening and closing tags this must appear on a single input line.* 
+**Note: both the opening and closing tags this must appear on a single input line.**
 
 This will be translated into:
 
