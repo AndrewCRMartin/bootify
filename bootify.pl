@@ -392,13 +392,14 @@ sub GetHomeMenu
 #  etc
 #
 #  11.11.15 Original   By: ACRM
+#  06.01.16 Also handles self-closing tags
 #
 sub Replace
 {
     my($line, $tag, $new, $idStem, $sCounter) = @_;
 
     # Construct the regex: <!-- [$tag] -->
-    my $regex = '<!--\s+\[' . $tag . '\]\s+--\>';
+    my $regex = '<!--\s+\[' . $tag . '(\s+\/)?\]\s+--\>';
     if(scalar(@_) > 3)
     {
         if($line =~ /$regex/)
@@ -712,6 +713,7 @@ __EOF
 #
 #  11.11.15 Original   By: ACRM
 #  05.01.16 Added Fixup_link() and Fixup_figure()
+#  06.01.16 Added Fixup_flush()
 #
 sub PrintHTMLPage
 {
@@ -735,6 +737,7 @@ sub PrintHTMLPage
     Fixup_confirm($aPage);
     Fixup_link($aPage);
     Fixup_figure($aPage);
+    Fixup_flush($aPage);
 
     foreach my $line (@$aPage)
     {
@@ -1229,5 +1232,14 @@ sub Fixup_figure
    <a tabindex='0' data-placement='{3}' role='button' data-toggle='popover' data-trigger='focus' title='Figure {2}' data-content=\"";
         $line = ReplaceMultiParams($line, 'figure', \@attributes, $replacement);
         $line = Replace($line, '/figure', "\">Figure $::attribute{'number'}<span class='glyphicon glyphicon-new-window'></span></a>\n</div>");
+    }
+}
+
+sub Fixup_flush
+{
+    my($aPage) = @_;
+    foreach my $line (@$aPage)
+    {
+        $line = Replace($line, 'flush', "<div style='clear: both;'>&nbsp;</div>");
     }
 }

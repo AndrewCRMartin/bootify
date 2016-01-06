@@ -144,6 +144,11 @@ You can create a floated figure with a pop-up figure legend using:
 
 `position` can be `top`, `right`, `bottom` or `left`.
 
+After floating figures, it is often useful to clear the floats so that
+other things go below them rather than to the side. You can do this with
+
+    <!-- [flush /] -->
+
 ### Confirmation box
 
 This is designed to provide a box where a user of the page can enter a
