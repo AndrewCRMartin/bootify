@@ -50,7 +50,7 @@
 #   =================
 #   V1.0    11.11.15 Original By: ACRM
 #   V1.1    11.11.15 Added quiz support
-#   V1.2    05.01.16 Added [link]
+#   V1.2    05.01.16 Added [link] and [figure]
 #
 #*************************************************************************
 # Add the path of the executable to the library path
@@ -67,6 +67,7 @@ use genquiz;
 use strict;
 $::accordionCount = 0;
 $::collapseCount  = 0;
+%::attribute      = ();
 
 UsageDie()   if(defined($::h));
 CleanupDie() if(defined($::clean));
@@ -476,6 +477,56 @@ sub ReplaceWholeTag
 
 
 #*************************************************************************
+#> $line = ReplaceMultiParams($line, $tag, $aAttributes, $replace)
+#  ---------------------------------------------------------------
+#  $line        - A line of HTML
+#  $tag         - The metatag name
+#  $aAttributes - Reference to an array of attribute names
+#  $replace     - Replacement text
+#
+#  Takes a metatag name with an associated set of attributes and replaces
+#  it with the new text inserting the attribute values. e.g.
+#     $line = ReplaceParam($line, 'foo', \@('bar1','bar2'), '<div class="{0}" style="{1}">');
+#  would replace
+#     <!-- [foo bar1='value' bar2='border: none'] -->
+#  with
+#     <div class="value" style="border: none">
+#
+#  The attribute values are also stored in the global %::attribute{} hash
+#
+#  05.01.16 Original   By: ACRM
+#
+sub ReplaceMultiParams
+{
+    my($line, $tag, $aAttributes, $replace) = @_;
+    my $regex = '<!--\s+\[' . $tag . '.*?\]\s+--\>'; # Check if it's this tag
+    my $attrCount = 0;
+    if($line =~ $regex)
+    {
+        foreach my $attribute (@$aAttributes)
+        {
+            my $attrRegex = $attribute . "=['\"](.*?)['\"]";
+            if($line =~ /$attrRegex/)
+            {
+                my $value = $1;
+                $replace =~ s/\{$attrCount\}/$value/g;
+                $::attribute{$attribute} = $value;
+            }
+            else
+            {
+                printf STDERR "Error (bootify): Attribute '$attribute' missing in line -\n";
+                printf STDERR "   $line\n";
+                exit 1;
+            }
+            $attrCount++;
+        }
+        $line =~ s/$regex/$replace/;
+    }
+    return($line);
+}
+
+
+#*************************************************************************
 #> void PrintHTMLFooter($fp)
 #  -------------------------
 #  Prints the footer for an HTML page
@@ -660,7 +711,7 @@ __EOF
 #  Then prints the lines of HTML to the file
 #
 #  11.11.15 Original   By: ACRM
-#  05.01.16 Added Fixup_link()
+#  05.01.16 Added Fixup_link() and Fixup_figure()
 #
 sub PrintHTMLPage
 {
@@ -683,6 +734,7 @@ sub PrintHTMLPage
     Fixup_box($aPage);
     Fixup_confirm($aPage);
     Fixup_link($aPage);
+    Fixup_figure($aPage);
 
     foreach my $line (@$aPage)
     {
@@ -1157,3 +1209,25 @@ sub Fixup_link
     }
 }
 
+#*************************************************************************
+#> void Fixup_link($aPage)
+#  -----------------------
+#  Replaces the [link] metatag with a <a href='xxx'>xxx</a>
+#
+#  05.01.16 Original   By: ACRM
+#
+sub Fixup_figure
+{
+    my($aPage) = @_;
+    my @attributes = ('src', 'float', 'number', 'position');
+
+    foreach my $line (@$aPage)
+    {
+        my $replacement  = "
+   <div style='float:{1}; width:350px; margin:0px 10px; border: 1pt solid #666666; padding:5px;'>
+   <img src='{0}' width='100%' alt='{0}' />
+   <a tabindex='0' data-placement='{3}' role='button' data-toggle='popover' data-trigger='focus' title='Figure {2}' data-content=\"";
+        $line = ReplaceMultiParams($line, 'figure', \@attributes, $replacement);
+        $line = Replace($line, '/figure', "\">Figure $::attribute{'number'}<span class='glyphicon glyphicon-new-window'></span></a>\n</div>");
+    }
+}

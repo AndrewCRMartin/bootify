@@ -132,6 +132,18 @@ This will be translated into:
     <a href='http://www.bioinf.org.uk' target='links'>http://www.bioinf.org.uk</a>
 
 
+### Figures
+
+You can create a floated figure with a pop-up figure legend using:
+
+    <!-- [figure src='file.gif' float='right' number='1' position='bottom'] -->
+    The figure legend goes here - it must not contain embedded HTML
+    <!-- [/figure] -->
+
+`float` can be `left` or `right`.
+
+`position` can be `top`, `right`, `bottom` or `left`.
+
 ### Confirmation box
 
 This is designed to provide a box where a user of the page can enter a
