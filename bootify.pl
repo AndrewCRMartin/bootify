@@ -5,7 +5,7 @@
 #   File:       bootify.pl
 #   
 #   Version:    V1.2
-#   Date:       05.01.16
+#   Date:       06.01.16
 #   Function:   Create a (set of) HTML page(s) using attractive 
 #               Bootstrap layout from very simple HTML meta-markup
 #               So this beautifies and boostrapifies the pages
@@ -50,7 +50,7 @@
 #   =================
 #   V1.0    11.11.15 Original By: ACRM
 #   V1.1    11.11.15 Added quiz support
-#   V1.2    05.01.16 Added [link] and [figure]
+#   V1.2    05.01.16 Added [link], [figure] and [flush/]
 #
 #*************************************************************************
 # Add the path of the executable to the library path
@@ -506,15 +506,23 @@ sub ReplaceMultiParams
     {
         foreach my $attribute (@$aAttributes)
         {
-            my $attrRegex = $attribute . "=['\"](.*?)['\"]";
+            # Remove the ? if there is one (optional attributes)
+            my $attr =  $attribute;
+            $attr    =~ s/\?//g;
+
+            # Construct the resgular expression
+            my $attrRegex = $attr . "=['\"](.*?)['\"]";
             if($line =~ /$attrRegex/)
             {
                 my $value = $1;
                 $replace =~ s/\{$attrCount\}/$value/g;
                 $::attribute{$attribute} = $value;
             }
-            else
+            elsif($attr eq $attribute)
             {
+                # If attribute wasn't found and was not optional (because the version with
+                # question marks stripped was the same as before removing them - i.e. there
+                # was no question mark), then we have an error
                 printf STDERR "Error (bootify): Attribute '$attribute' missing in line -\n";
                 printf STDERR "   $line\n";
                 exit 1;
@@ -1195,6 +1203,7 @@ sub Fixup_quiz
     }
 }
 
+
 #*************************************************************************
 #> void Fixup_link($aPage)
 #  -----------------------
@@ -1212,6 +1221,7 @@ sub Fixup_link
     }
 }
 
+
 #*************************************************************************
 #> void Fixup_link($aPage)
 #  -----------------------
@@ -1222,12 +1232,12 @@ sub Fixup_link
 sub Fixup_figure
 {
     my($aPage) = @_;
-    my @attributes = ('src', 'float', 'number', 'position');
+    my @attributes = ('src', 'float', 'number', 'position', 'width');
 
     foreach my $line (@$aPage)
     {
         my $replacement  = "
-   <div style='float:{1}; width:350px; margin:0px 10px; border: 1pt solid #666666; padding:5px;'>
+   <div style='float:{1}; margin:0px 10px; border: 1pt solid #666666; padding:5px; width:{4}'>
    <img src='{0}' width='100%' alt='{0}' />
    <a tabindex='0' data-placement='{3}' role='button' data-toggle='popover' data-trigger='focus' title='Figure {2}' data-content=\"";
         $line = ReplaceMultiParams($line, 'figure', \@attributes, $replacement);
@@ -1235,6 +1245,15 @@ sub Fixup_figure
     }
 }
 
+
+#*************************************************************************
+#> void Fixup_flush($aPage)
+#  -----------------------
+#  Replaces the [flush/] metatag with 
+#  <div style='clear: both;'>&nbsp;</div>
+#
+#  05.01.16 Original   By: ACRM
+#
 sub Fixup_flush
 {
     my($aPage) = @_;

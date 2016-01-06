@@ -136,7 +136,7 @@ This will be translated into:
 
 You can create a floated figure with a pop-up figure legend using:
 
-    <!-- [figure src='file.gif' float='right' number='1' position='bottom'] -->
+    <!-- [figure src='file.gif' float='right' number='1' position='bottom' width='350px'] -->
     The figure legend goes here - it must not contain embedded HTML
     <!-- [/figure] -->
 
