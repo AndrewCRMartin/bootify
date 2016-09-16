@@ -4,8 +4,8 @@
 #   Program:    bootify
 #   File:       bootify.pl
 #   
-#   Version:    V1.2
-#   Date:       06.01.16
+#   Version:    V1.3
+#   Date:       16.09.16
 #   Function:   Create a (set of) HTML page(s) using attractive 
 #               Bootstrap layout from very simple HTML meta-markup
 #               So this beautifies and boostrapifies the pages
@@ -51,6 +51,7 @@
 #   V1.0    11.11.15 Original By: ACRM
 #   V1.1    11.11.15 Added quiz support
 #   V1.2    05.01.16 Added [link], [figure] and [flush/]
+#   V1.3    16.09.16 Added [home]
 #
 #*************************************************************************
 # Add the path of the executable to the library path
@@ -98,9 +99,10 @@ if(scalar(@ARGV))
         print "\n";
     }
     
-    # Taken from the [bigheading] <h1>
-    my $homeMenu = GetHomeMenu(@data);
+    # Taken from the [bigheading] <h1> or from [home] if specified
+    my ($homeMenu, $homeURL) = GetHomeMenu(@data);
     print "Home menu item: $homeMenu\n" if(defined($::debug));
+    print "Home menu URL:  $homeURL\n"  if(defined($::debug));
     
     # Split up the pages and create each one
     my $aPages = GetPages(@data);
@@ -109,7 +111,7 @@ if(scalar(@ARGV))
     {
         my $lastPage = 0;
         $lastPage = 1 if($pageNum == (scalar(@$aPages) - 1));
-        WritePage($pageNum, $title, $style, $homeMenu, $aMenu, $aPage, $lastPage);
+        WritePage($pageNum, $title, $style, $homeMenu, $homeURL, $aMenu, $aPage, $lastPage);
         $pageNum++;
     }
 }
@@ -151,7 +153,7 @@ sub UsageDie
 {
     print <<__EOF;
 
-bootify V1.2 (c) UCL, Dr. Andrew C.R. Martin
+bootify V1.3 (c) UCL, Dr. Andrew C.R. Martin
 
 Usage: bootify file.html
        -or-
@@ -276,15 +278,16 @@ sub GetPages
 
 
 #*************************************************************************
-#> void WritePage($pageNum, $title, $style, $homeMenu, $aMenu, 
-#                 $aPage, $lastPage)
+#> void WritePage($pageNum, $title, $style, $homeMenu, $homeURL,
+#                 $aMenu, $aPage, $lastPage)
 #  --------------------------------------------------------------
 #  $pageNum  - The page number.  0 gives index.html
 #                               >0 gives pageN.html
 #  $title    - Contents of <title> tag
 #  $style    - Any contents of <style> tag
-#  $homeMenu - A title-like home menu item taken from the 
+#  $homeMenu - A title-like home menu item taken from [home] or the 
 #              [bigheading]<h1>
+#  $homeURL  - A URL for the home menu item if [home url=''] given
 #  $aMenu    - Reference to array of menu items
 #  $aPage    - Reference to array of lines for this page
 #  $lastPage - Flag to indicate this is the last page so doesn't
@@ -293,10 +296,11 @@ sub GetPages
 #  Writes an HTML page
 #
 #  11.11.15 Original   By: ACRM
+#  16.09.16 Added $homeURL
 #
 sub WritePage
 {
-    my ($pageNum, $title, $style, $homeMenu, $aMenu, $aPage, $lastPage) = @_;
+    my ($pageNum, $title, $style, $homeMenu, $homeURL, $aMenu, $aPage, $lastPage) = @_;
 
     my $filename = 'index.html';
     if($pageNum)
@@ -307,7 +311,7 @@ sub WritePage
     if(open(my $fp, '>', $filename))
     {
         PrintHTMLHeader($fp, $title, $style);
-        PrintHTMLMenu($fp, $homeMenu, $aMenu, $pageNum);
+        PrintHTMLMenu($fp, $homeMenu, $homeURL, $aMenu, $pageNum);
         PrintHTMLPage($fp, $aPage);
         PrintHTMLNextButton($fp, $pageNum) if(!$lastPage);
         PrintHTMLFooter($fp);
@@ -319,9 +323,11 @@ sub WritePage
 #*************************************************************************
 #> $homeMenu = GetHomeMenu(@data)
 #  ------------------------------
-#  Extracts a home menu title from [bigheading]<h1>
+#  Extracts a home menu title from [home] if specified, otherwise
+#  from [bigheading]<h1>
 #
 #  11.11.15 Original   By: ACRM
+#  16.09.16 Modified to use [home] if specified
 #
 sub GetHomeMenu
 {
@@ -329,6 +335,24 @@ sub GetHomeMenu
     my $inBigHeading = 0;
     my $inH1 = 0;
     my $h1 = '';
+
+    my $url = '';
+
+    # First check for [home] tag
+    foreach my $line (@data)
+    {
+        if($line =~ /<!--\s+\[home\s+url=['"](.*?)['"]\].*--\>/)
+        {
+            $url = $1;
+        }
+        if($line =~ /<!--\s+\[home.*?\](.*)\[\/home\].*--\>/)
+        {
+            $h1 = $1;
+            return($h1, $url);
+        }
+    }
+
+    # [home] tag not found, use [bigheading]<h1>
     foreach my $line (@data)
     {
         if($inBigHeading)
@@ -589,10 +613,11 @@ __EOF
 
 
 #*************************************************************************
-#> void PrintHTMLMenu($fp, $homeMenu, $aMenu, $pageNum)
-#  ----------------------------------------------------
+#> void PrintHTMLMenu($fp, $homeMenu, $homeURL, $aMenu, $pageNum)
+#  --------------------------------------------------------------
 #  $fp       - File handle
 #  $homeMenu - The 'home menu' item
+#  $homeURL  - A URL for the home menu item if [home url=''] given
 #  $aMenu    - Reference to an array of menu items
 #  $pageNum  - The current page number (to highlight the current
 #              menu item)
@@ -600,10 +625,13 @@ __EOF
 #  Prints the HTML menu. This is a list formatted with Bootstrap
 #
 #  11.11.15 Original   By: ACRM
+#  16.09.16 Added $homeURL
 #
 sub PrintHTMLMenu
 {
-    my($fp, $homeMenu, $aMenu, $pageNum) = @_;
+    my($fp, $homeMenu, $homeURL, $aMenu, $pageNum) = @_;
+
+    $homeURL = 'index.html' if($homeURL eq '');
 
     print $fp <<__EOF;
     <!-- Fixed navbar -->
@@ -617,7 +645,7 @@ sub PrintHTMLMenu
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="index.html">$homeMenu</a>
+          <a class="navbar-brand" href="$homeURL">$homeMenu</a>
         </div>
 
         <div class="navbar-collapse collapse">
