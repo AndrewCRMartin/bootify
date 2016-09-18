@@ -69,8 +69,8 @@ $::accordionCount = 0;
 $::collapseCount  = 0;
 %::attribute      = ();
 
-UsageDie()   if(defined($::h));
-CleanupDie() if(defined($::clean));
+UsageDie()           if(defined($::h));
+CleanupDie($::force) if(defined($::clean));
 
 if(scalar(@ARGV))
 {
@@ -146,6 +146,7 @@ sub WriteCSSandJS
 #
 #  11.11.15 Original   By: ACRM
 #  05.01.16 V1.2 - corrected program name!
+#  18.09.16 V1.6 - added -force
 #
 sub UsageDie
 {
@@ -155,7 +156,10 @@ bootify V1.2 (c) UCL, Dr. Andrew C.R. Martin
 
 Usage: bootify file.html
        -or-
-       bootify -clean
+       bootify -clean [-force]
+
+-clean - removes generated files
+-force - with -clean does nt check if you want to delete HTML files
 
 Note that every piece of meta-HTML must appear on a single line in the input.
 
@@ -1117,15 +1121,19 @@ sub Fixup_confirm
 #
 sub CleanupDie
 {
+    my($force) = @_;
+
+    $force = (($force)?'-f':'-i');
+
     `\\rm -f mpajax.js`;
     `\\rm -f mpcss.css`;
     `\\rm -f mptheme.css`;
     `\\rm -f mpautotooltip.js`;
     `\\rm -f mpparticipation.cgi`;
-    `\\rm -i index.html` if(-e 'index.html');
-    `\\rm -i .htaccess` if(-e '.htaccess');
-    `\\rm -i page*.html` if(-e 'page1.html');
-    `\\rm -i throbber.gif` if(-e 'throbber.gif');
+    `\\rm $force index.html` if(-e 'index.html');
+    `\\rm $force .htaccess` if(-e '.htaccess');
+    `\\rm $force page*.html` if(-e 'page1.html');
+    `\\rm $force throbber.gif` if(-e 'throbber.gif');
 
     exit(0);
 }
