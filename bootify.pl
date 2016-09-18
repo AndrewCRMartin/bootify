@@ -51,7 +51,7 @@
 #   V1.0    11.11.15 Original By: ACRM
 #   V1.1    11.11.15 Added quiz support
 #   V1.2    05.01.16 Added [link], [figure] and [flush/]
-#   V1.3    16.09.16 Added [home]
+#   V1.3    16.09.16 Added [home] and -force
 #
 #*************************************************************************
 # Add the path of the executable to the library path
@@ -148,7 +148,7 @@ sub WriteCSSandJS
 #
 #  11.11.15 Original   By: ACRM
 #  05.01.16 V1.2 - corrected program name!
-#  18.09.16 V1.6 - added -force
+#  18.09.16 V1.3 - added -force and new options
 #
 sub UsageDie
 {
@@ -161,7 +161,7 @@ Usage: bootify file.html
        bootify -clean [-force]
 
 -clean - removes generated files
--force - with -clean does nt check if you want to delete HTML files
+-force - with -clean does not check if you want to delete HTML files
 
 Note that every piece of meta-HTML must appear on a single line in the input.
 
