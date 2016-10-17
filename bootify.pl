@@ -4,8 +4,8 @@
 #   Program:    bootify
 #   File:       bootify.pl
 #   
-#   Version:    V1.3
-#   Date:       16.09.16
+#   Version:    V1.4
+#   Date:       17.10.16
 #   Function:   Create a (set of) HTML page(s) using attractive 
 #               Bootstrap layout from very simple HTML meta-markup
 #               So this beautifies and boostrapifies the pages
@@ -52,6 +52,7 @@
 #   V1.1    11.11.15 Added quiz support
 #   V1.2    05.01.16 Added [link], [figure] and [flush/]
 #   V1.3    16.09.16 Added [home] and -force
+#   V1.4    17.10.16 Added open='true' option to [ai]
 #
 #*************************************************************************
 # Add the path of the executable to the library path
@@ -149,12 +150,13 @@ sub WriteCSSandJS
 #  11.11.15 Original   By: ACRM
 #  05.01.16 V1.2 - corrected program name!
 #  18.09.16 V1.3 - added -force and new options
+#  17.10.16 V1.4 - added open='true' option for [ai]
 #
 sub UsageDie
 {
     print <<__EOF;
 
-bootify V1.3 (c) UCL, Dr. Andrew C.R. Martin
+bootify V1.34(c) UCL, Dr. Andrew C.R. Martin
 
 Usage: bootify file.html
        -or-
@@ -988,12 +990,13 @@ sub Fixup_accordion
 #  Replaces the [ai title='xxx'] metatag with an accordion item
 #
 #  11.11.15 Original   By: ACRM
+#  17.10.16 Added open='true' option
 #
 sub Fixup_ai
 {
     my($aPage) = @_;
 
-    my $regexStart = '<!--\s+\[ai\s+title=[\'\"](.*)[\'\"]\s*\]\s+--\>';
+    my $regexStart = '<!--\s+\[ai\s+title=[\'\"](.*?)[\'\"]\s*(open=[\'\"].*?[\'\"])?\s*\]\s+--\>';
     my $regexStop  = '<!--\s+\[\/ai\]\s+--\>';
     my $accordion  = "accordion$::accordionCount";
 
@@ -1002,6 +1005,8 @@ sub Fixup_ai
         if($line =~ /$regexStart/)
         {
             my $title = $1;
+            my $open  = $2;
+            $open = ' in ' if($open ne '');
             $::collapseCount++;
             my $collapse = "collapse$::collapseCount";
             $line = "  <div class='panel panel-default'>
@@ -1012,7 +1017,7 @@ sub Fixup_ai
         </a>
       </h4>
     </div>
-    <div id='$collapse' class='panel-collapse collapse'>
+    <div id='$collapse' class='panel-collapse collapse $open'>
       <div class='panel-body'>";
         }
         elsif($line =~ /$regexStop/)

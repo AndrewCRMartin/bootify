@@ -112,6 +112,10 @@ You can create an accordion as follows - `ai` is analagous to `<li>`
     <!-- [/ai] -->
     <!-- [/accordion] -->
 
+If you want an accordion element to be open by default, then you use
+
+    <!-- [ai title='xxx' open='true'] -->
+
 A box has similar styling to an accordion but doesn't shrink and expand
 
     <!-- [box title='xxx'] -->

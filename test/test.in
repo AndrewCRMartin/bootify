@@ -83,7 +83,7 @@ Formatting is created by using metatags buried in HTML comments of the form:
 </p>
 
 <!-- [accordion] -->
-<!-- [ai title='Section 1'] -->
+<!-- [ai title='Section 1' open='true'] -->
 <p>This is section 1</p>
 <!-- [/ai] -->
 <!-- [ai title='Section 2'] -->
