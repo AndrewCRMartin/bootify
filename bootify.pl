@@ -213,6 +213,7 @@ sub GetStyle
 {
     my(@data) = @_;
     my $style = '';
+    my $links = '';
     my $allData = join(' ', @data);
 
     $allData =~ s/\r//g;
@@ -225,7 +226,7 @@ sub GetStyle
     }
     if(length($style))
     {
-        $style = "<style type='text/css'>\n" + $style + "</style>\n";
+        $style = "<style type='text/css'>\n" . $style . "</style>\n";
     }
 
     # Add any external style sheets
@@ -233,11 +234,11 @@ sub GetStyle
     {
         if($line =~ /(\<link.*\/\>)/)
         {
-            $style .= "$1\n";
+            $links .= "$1\n";
         }
     }
 
-    return($style);
+    return("$links$style");
 }
 
 
