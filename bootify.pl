@@ -4,13 +4,13 @@
 #   Program:    bootify
 #   File:       bootify.pl
 #   
-#   Version:    V1.4
-#   Date:       17.10.16
+#   Version:    V1.5
+#   Date:       09.01.16
 #   Function:   Create a (set of) HTML page(s) using attractive 
 #               Bootstrap layout from very simple HTML meta-markup
 #               So this beautifies and boostrapifies the pages
 #   
-#   Copyright:  (c) Dr. Andrew C. R. Martin, UCL, 2015-2016
+#   Copyright:  (c) Dr. Andrew C. R. Martin, UCL, 2015-2017
 #   Author:     Dr. Andrew C. R. Martin
 #   Address:    Institute of Structural and Molecular Biology
 #               Division of Biosciences
@@ -53,6 +53,7 @@
 #   V1.2    05.01.16 Added [link], [figure] and [flush/]
 #   V1.3    16.09.16 Added [home] and -force
 #   V1.4    17.10.16 Added open='true' option to [ai]
+#   V1.5    09.01.17 Added support for external style sheets with <link>
 #
 #*************************************************************************
 # Add the path of the executable to the library path
@@ -151,12 +152,14 @@ sub WriteCSSandJS
 #  05.01.16 V1.2 - corrected program name!
 #  18.09.16 V1.3 - added -force and new options
 #  17.10.16 V1.4 - added open='true' option for [ai]
+#  09.01.17 V1.5 - Added support for external style sheets with <link>
+
 #
 sub UsageDie
 {
     print <<__EOF;
 
-bootify V1.34(c) UCL, Dr. Andrew C.R. Martin
+bootify V1.5(c) UCL, Dr. Andrew C.R. Martin
 
 Usage: bootify file.html
        -or-
@@ -203,6 +206,8 @@ sub GetTitle
 #  first style tag - does not pick up external style information
 #
 #  11.11.15 Original   By: ACRM
+#  09.01.17 Now does the wrapping around $style and also checks for 
+#           external style sheets
 #
 sub GetStyle
 {
@@ -216,8 +221,22 @@ sub GetStyle
     if($allData=~/<style.*?>(.*?)<\/style>/)
     {
         $style = $1;
+        $style =~ s/<ret>/\n/g;
     }
-    $style =~ s/<ret>/\n/g;
+    if(length($style))
+    {
+        $style = "<style type='text/css'>\n" + $style + "</style>\n";
+    }
+
+    # Add any external style sheets
+    foreach my $line (@data)
+    {
+        if($line =~ /(\<link.*\/\>)/)
+        {
+            $style .= "$1\n";
+        }
+    }
+
     return($style);
 }
 
@@ -689,15 +708,11 @@ __EOF
 #  Creates an HTML header for a page
 #
 #  11.11.15 Original   By: ACRM
+#  09.01.17 No longer does the wrapping around $style as that is done in GetStyle()
 #
 sub PrintHTMLHeader
 {
     my($fp, $title, $style) = @_;
-
-    if($style ne '')
-    {
-        $style = "<style type='text/css'>$style</style>\n";
-    }
 
     print $fp <<__EOF;
 <!DOCTYPE html>

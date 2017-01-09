@@ -183,7 +183,8 @@ See the `genquiz` documentation below for the format used for the quiz.
 If present, the contents of the first `<style>` tag in the HTML
 `<head>` section will be copied onto each page.
 
-
+In addition any external style sheets referenced with `<link>` tags 
+will appear on each page.
 
 ### HTML title
 
