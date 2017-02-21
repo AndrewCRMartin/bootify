@@ -4,8 +4,8 @@
 #   Program:    bootify
 #   File:       bootify.pl
 #   
-#   Version:    V1.5
-#   Date:       09.01.16
+#   Version:    V1.6
+#   Date:       21.02.17
 #   Function:   Create a (set of) HTML page(s) using attractive 
 #               Bootstrap layout from very simple HTML meta-markup
 #               So this beautifies and boostrapifies the pages
@@ -54,6 +54,7 @@
 #   V1.3    16.09.16 Added [home] and -force
 #   V1.4    17.10.16 Added open='true' option to [ai]
 #   V1.5    09.01.17 Added support for external style sheets with <link>
+#   V1.6    21.02.17 Added -local flag
 #
 #*************************************************************************
 # Add the path of the executable to the library path
@@ -65,19 +66,35 @@ use lib $FindBin::Bin;
 #use FindBin;
 #use lib abs_path("$FindBin::Bin/../lib");
 use genquiz;
+use strict;
 
 #*************************************************************************
-use strict;
+# The JQuery and Bootstrap distributions
+$::jquery            = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js";
+$::bootstrapjs       = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js";
+
+$::bootstrapcss      = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css";
+$::bootstrapthemecss = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css";
+
+$::bootstrapeot      = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/fonts/glyphicons-halflings-regular.eot";
+$::bootstrapsvg      = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/fonts/glyphicons-halflings-regular.svg";
+$::bootstrapttf      = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/fonts/glyphicons-halflings-regular.ttf";
+$::bootstrapwoff     = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/fonts/glyphicons-halflings-regular.woff";
+$::bootstrapwoff2    = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/fonts/glyphicons-halflings-regular.woff2";
+
+
+#*************************************************************************
 $::accordionCount = 0;
 $::collapseCount  = 0;
 %::attribute      = ();
+$::local          = defined($::local)?1:0;
 
 UsageDie()           if(defined($::h));
 CleanupDie($::force) if(defined($::clean));
 
 if(scalar(@ARGV))
 {
-    WriteCSSandJS();            # Write CSS and JavaScript files
+    WriteCSSandJS($::local);    # Write CSS and JavaScript files
 
     my @data = <>;              # Read the input HTML file
 
@@ -135,11 +152,117 @@ else
 #
 sub WriteCSSandJS
 {
+    my ($local) = @_;
+
     my $share = Cwd::abs_path("$FindBin::Bin/share");
     `cp $share/bootify/throbber.gif .`;
     `cp $share/bootify/mptheme.css .`;
     `cp $share/bootify/mpcss.css .`;
     `cp $share/bootify/mpautotooltip.js .`;
+
+    # Stash copies of the JQuery and Bootstrap files if they don't exist
+    if($local)
+    {
+        CheckAndGetSharedFile("$share/bootify/jquery.min.js", 
+                              $::jquery);
+        CheckAndGetSharedFile("$share/bootify/bootstrap.min.js", 
+                              $::bootstrapjs);
+        CheckAndGetSharedFile("$share/bootify/bootstrap.min.css", 
+                              $::bootstrapcss);
+        CheckAndGetSharedFile("$share/bootify/bootstrap-theme.min.css", 
+                              $::bootstrapthemecss);
+        CheckAndGetSharedFile("$share/bootify/glyphicons-halflings-regular.eot", 
+                              $::bootstrapeot);
+        CheckAndGetSharedFile("$share/bootify/glyphicons-halflings-regular.svg", 
+                              $::bootstrapsvg);
+        CheckAndGetSharedFile("$share/bootify/glyphicons-halflings-regular.ttf", 
+                              $::bootstrapttf);
+        CheckAndGetSharedFile("$share/bootify/glyphicons-halflings-regular.woff", 
+                              $::bootstrapwoff);
+        CheckAndGetSharedFile("$share/bootify/glyphicons-halflings-regular.woff2", 
+                              $::bootstrapwoff2);
+        if(! -d "./bootifyshare")
+        {
+            `mkdir -p ./bootifyshare/js`;
+            `mkdir -p ./bootifyshare/css`;
+            `mkdir -p ./bootifyshare/fonts`;
+        }
+        CopyFileLocalOrWeb("$share/bootify", "jquery.min.js",           
+                           $::jquery,            "./bootifyshare/js");
+        CopyFileLocalOrWeb("$share/bootify", "bootstrap.min.js",
+                           $::bootstrapjs,       "./bootifyshare/js");
+        CopyFileLocalOrWeb("$share/bootify", "bootstrap.min.css",
+                           $::bootstrapcss,      "./bootifyshare/css");
+        CopyFileLocalOrWeb("$share/bootify", "bootstrap-theme.min.css",
+                           $::bootstrapthemecss, "./bootifyshare/css");
+        CopyFileLocalOrWeb("$share/bootify", "glyphicons-halflings-regular.eot", 
+                           $::bootstrapeot, "./bootifyshare/fonts");
+        CopyFileLocalOrWeb("$share/bootify", "glyphicons-halflings-regular.svg", 
+                           $::bootstrapsvg, "./bootifyshare/fonts");
+        CopyFileLocalOrWeb("$share/bootify", "glyphicons-halflings-regular.ttf", 
+                           $::bootstrapttf, "./bootifyshare/fonts");
+        CopyFileLocalOrWeb("$share/bootify", "glyphicons-halflings-regular.woff", 
+                           $::bootstrapwoff, "./bootifyshare/fonts");
+        CopyFileLocalOrWeb("$share/bootify", "glyphicons-halflings-regular.woff2", 
+                           $::bootstrapwoff2, "./bootifyshare/fonts");
+    }
+}
+
+#*************************************************************************
+#> sub CopyFileLocalOrWeb($localDir, $filename, $url, $dest)
+#  ---------------------------------------------------------
+#  $localDir - the local directory where the file is cached
+#  $filename - the file name within the directory
+#  $url      - the remote URL for the file
+#  $dest     - the destination directory for the file
+#  If a local copy of the file exists as $localDir/$filename then this is
+#  copied to $dest.
+#  If not then we grab the file over the internet
+#
+#  21.02.17 Original   By: ACRM
+sub CopyFileLocalOrWeb
+{
+    my($localDir, $filename, $url, $dest) = @_;
+
+    if(-e "$localDir/$filename")
+    {
+        `cp $localDir/$filename $dest`
+    }
+    else
+    {
+        `wget -O $dest/$filename $url`;
+    }
+}
+
+
+#*************************************************************************
+#> void CheckAndGetSharedFile($dest, $url)
+#  ---------------------------------------
+#  $dest - destination file
+#  $url  - URL of file
+#  This routine checks if a file exists. If not, then it checks for 
+#  write permissions in the file's directory and attempts to get the
+#  file from the internet.
+#  This is used to populate the bootify share directory with copies
+#  of jquery and bootstrap
+#
+#  21.02.17 Original By: ACRM
+sub CheckAndGetSharedFile
+{
+    my($dest, $url) = @_;
+    if(! -e $dest)
+    {
+        my $destDir = $dest;
+        $destDir =~ m/(.*\/)/;
+        $destDir = $1;
+        my $checkWrite = $destDir . ".checkWrite";
+        `touch $checkWrite`;
+        if(-e $checkWrite)
+        {
+            `wget -O $dest $url`;
+            unlink("$checkWrite");
+        }
+    }
 }
 
 
@@ -153,18 +276,20 @@ sub WriteCSSandJS
 #  18.09.16 V1.3 - added -force and new options
 #  17.10.16 V1.4 - added open='true' option for [ai]
 #  09.01.17 V1.5 - Added support for external style sheets with <link>
-
+#  21.02.17 V1.6 - Added -local option
 #
 sub UsageDie
 {
     print <<__EOF;
 
-bootify V1.5(c) UCL, Dr. Andrew C.R. Martin
+bootify V1.6 (c) 2015-2017 UCL, Dr. Andrew C.R. Martin
 
-Usage: bootify file.html
+Usage: bootify [-local] file.boot
        -or-
        bootify -clean [-force]
 
+-local - Do a local install of Bootstrap and JQuery rather than referencing
+         them over the web
 -clean - removes generated files
 -force - with -clean does not check if you want to delete HTML files
 
@@ -596,22 +721,38 @@ sub PrintHTMLFooter
 {
     my($fp) = @_;
 
-    print $fp <<'__EOF';
+    if($::local)
+    {
+        print $fp <<__EOF;
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" crossorigin="anonymous"></script>
-<!--
-    <script src="bootstrap/assets/js/jquery.js"></script>
-    <script src="bootstrap/dist/js/bootstrap.min.js"></script>
--->
+    <script src="bootifyshare/js/jquery.min.js"></script>
+    <script src="bootifyshare/js/bootstrap.min.js"></script>
+
     <script src="mpautotooltip.js"></script>
   </body>
 </html>
 __EOF
+    }
+    else
+    {
+        print $fp <<__EOF;
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+    <script src="$::jquery"></script>
+    <script src="$::bootstrapjs" crossorigin="anonymous"></script>
+
+    <script src="mpautotooltip.js"></script>
+  </body>
+</html>
+__EOF
+    }
 }
 
 
@@ -725,17 +866,25 @@ sub PrintHTMLHeader
     <meta name="author" content="">
     <link rel="shortcut icon" href="favicon.png">
 
-    <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" crossorigin="anonymous">
+__EOF
+    if($::local)
+    {
+        print $fp <<__EOF;
+    <!-- Bootstrap core CSS and theme -->
+    <link href="bootifyshare/css/bootstrap.min.css" rel="stylesheet">
+    <link href="bootifyshare/css/bootstrap-theme.min.css" rel="stylesheet">
+__EOF
+    }
+    else
+    {
+        print $fp <<__EOF;
+    <!-- Bootstrap core CSS and theme -->
+    <link rel="stylesheet" href="$::bootstrapcss" crossorigin="anonymous">
+    <link rel="stylesheet" href="$::bootstrapthemecss" crossorigin="anonymous">
+__EOF
+    }
 
-    <!-- Bootstrap theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" crossorigin="anonymous">
-
-<!-- 
-    <link href="bootstrap/dist/css/bootstrap.css" rel="stylesheet">
-    <link href="bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet">
--->
-
+    print $fp <<__EOF;
     <!-- Custom styles for this template -->
     <link href="mptheme.css" rel="stylesheet">
 
@@ -762,7 +911,7 @@ __EOF
 #*************************************************************************
 #> void PrintHTMLPage($fp, $aPage)
 #  -------------------------------
-#  $fp     - File hanle
+#  $fp     - File handle
 #  $aPage  - Reference to array of lines for the page
 #
 #  The main routine for printing a page of HTML. Calls the various
@@ -1174,11 +1323,12 @@ sub CleanupDie
 
     $force = (($force)?'-f':'-i');
 
-    `\\rm -f mpajax.js`;
-    `\\rm -f mpcss.css`;
-    `\\rm -f mptheme.css`;
-    `\\rm -f mpautotooltip.js`;
-    `\\rm -f mpparticipation.cgi`;
+    `\\rm -f  mpajax.js`;
+    `\\rm -f  mpcss.css`;
+    `\\rm -f  mptheme.css`;
+    `\\rm -f  mpautotooltip.js`;
+    `\\rm -f  mpparticipation.cgi`;
+    `\\rm -rf bootifyshare`;
     `\\rm $force index.html` if(-e 'index.html');
     `\\rm $force .htaccess` if(-e '.htaccess');
     `\\rm $force page*.html` if(-e 'page1.html');

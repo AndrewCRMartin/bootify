@@ -137,7 +137,7 @@ A: Proline
 Please confirm that you have completed this work to the best of your ability.
 <!-- [/confirm] -->
 
-<p>View a <a href='test.in'>printable version</a> of the full set of pages.</p>
+<p>View a <a href='test.boot'>printable version</a> of the full set of pages.</p>
 
 <!-- [/page] -->
 
