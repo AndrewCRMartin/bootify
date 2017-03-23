@@ -52,3 +52,13 @@ pre {
    font-family: Courier,monospace;
    font-size: 110%;
 }
+.samp-outline {
+   font-family: Courier,monospace;
+   font-size: 110%;
+   background: #f3f3f3;
+   padding: 0px 3px;
+   margin: 0px 1px;
+   border: 1pt solid #afafaf;
+   border-radius: 5px;
+
+}
