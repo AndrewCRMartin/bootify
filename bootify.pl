@@ -1290,8 +1290,8 @@ sub Fixup_confirm
       </h4>
       <form>
          <table>
-            <tr><th>Name:</th><td><input type='text' size='40' name='name' id='name' /></td</tr>
-            <tr><th>Email:</th><td><input type='text' size='40' name='email' id='email' /></td></tr>
+            <tr><th style='padding: 5px;'>Name:</th><td><input type='text' size='40' name='name' id='name' /></td></tr>
+            <tr><th style='padding: 5px;'>Email:</th><td><input type='text' size='40' name='email' id='email' /></td></tr>
          </table>
          <p><input type='checkbox' name='confirmed' id='confirmed' /> I confirm the above statement.</p>
          <p>&nbsp;</p>
